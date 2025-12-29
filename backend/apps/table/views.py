@@ -2,11 +2,12 @@ from django.shortcuts import render
 from rest_framework import views, status, permissions, response
 from .serializers import TableManagementSerializer
 from .services import get_tables, get_table_by_id
+from .permissions import TablePermissions
 # Create your views here.
 
 
 class TableManagementView(views.APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny, TablePermissions]
 
     def get(self, request):
 
