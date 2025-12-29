@@ -1,4 +1,4 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from rest_framework import views, status, permissions, response
 from .serializers import TableManagementSerializer
 from .services import get_tables, get_table_by_id
@@ -18,7 +18,6 @@ class TableManagementView(views.APIView):
     def post(self, request, *args, **kwargs):
 
         serializer = TableManagementSerializer(data=request.data)
-
         if serializer.is_valid():
             serializer.save()
             return response.Response(status=status.HTTP_201_CREATED)
