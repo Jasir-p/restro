@@ -15,6 +15,12 @@ class TablePermissions(BasePermission):
         if request.method == 'POST':
             return request.user.has_perm("table.add_table")
         
+        if request.method in ("PUT", "PATCH"):
+            return request.user.has_perm("table.change_table")
+        
+        if request.method == "DELETE":
+            return request.user.has_perm("table.delete_table")
+        
         return False
 
 
