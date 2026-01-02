@@ -1,0 +1,125 @@
+# from django.shortcuts import render
+from rest_framework import viewsets, views, permissions, response, status, decorators
+from .serializers import MenuitemsSerializer, OrderSerializer, OrderStatusSerializer, ReadOrderSerializer
+from .models import MenuItem
+from .permissions import MenuItemPermission, OrderPermissions
+from .services import (
+    get_all_orders, 
+    get_order_by_waiter, 
+    order_get_by_id, 
+    get_menu_item_by_id)
+
+# Create your views here.
+
+
+class MenuItemsManagementViews(viewsets.ModelViewSet):
+
+    serializer_class = MenuitemsSerializer
+    queryset = MenuItem.objects.all()
+    
+    def get_permissions(self):
+
+        if self.action == 'list':
+            return [permissions.IsAuthenticated()]
+        
+        return [permissions.IsAuthenticated(), MenuItemPermission()]
+    
+@decorators.api_view(["POST"])
+@decorators.permission_classes([permissions.IsAuthenticated])
+def menu_avalabilty_change(request, id):
+    user = request.user
+
+    if user.has_perm("orders.change_menu_item"):
+
+        menu_item = get_menu_item_by_id(id)
+
+        menu_item.is_available = not menu_item.is_available
+        menu_item.save()
+        return response.Response(
+            {"message": "successfully updated menu item"}, 
+            status=status.HTTP_200_OK)
+    
+    return response.Response(
+        {"error": "you dont have permission"},
+        status=status.HTTP_403_FORBIDDEN)
+
+
+class OrdersManagementView(views.APIView):
+    permission_classes = [permissions.IsAuthenticated, OrderPermissions]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if user.has_perm("orders.view_order"):
+            orders = get_all_orders() 
+        else:
+            orders = get_order_by_waiter(self.request.user)
+
+        serializer = ReadOrderSerializer(orders, many=True)
+
+        return response.Response({'orders': serializer.data}, 
+                                 status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+
+        serializer = OrderSerializer(
+            data=request.data, 
+            context={"request": request}
+            )
+        
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response({"message": "Order created successfully"}, 
+                                     status=status.HTTP_201_CREATED)
+        
+        return response.Response({"error": serializer.errors}, 
+                                 status=status.HTTP_400_BAD_REQUEST)
+
+
+VALID_TRANSITIONS = {
+    "placed": ["in_kitchen"],
+    "in_kitchen": ["served"],
+}
+
+
+@decorators.api_view(["POST"])
+@decorators.permission_classes([permissions.IsAuthenticated])
+def order_status_change(request, id):
+    user = request.user
+
+    if user.has_perm("orders.change_order"):
+        serializer = OrderStatusSerializer(data=request.data)
+
+        if serializer.is_valid():
+            order = order_get_by_id(id)
+
+            status_new = serializer.validated_data["status"]
+
+            if status_new not in VALID_TRANSITIONS.get(order.status, []):
+                return response.Response({
+                    "error": "Invalid status Change"},
+                    status=status.HTTP_400_BAD_REQUEST
+                    
+                )
+            
+            order.status = status_new
+            order.save()
+            return response.Response(
+             {"message": "Order status updated successfully"},
+             status=status.HTTP_200_OK
+            )
+        
+        return response.Response(
+            {"error": "invalid status"}, 
+            status=status.HTTP_400_BAD_REQUEST)
+
+    return response.Response(
+        {"error": "You dont have permission"},
+        status=status.HTTP_403_FORBIDDEN
+    )
+
+
+
+
+
+
+
