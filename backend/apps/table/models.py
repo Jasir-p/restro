@@ -15,4 +15,9 @@ class Table(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICE,
                               default='available')
 
+    class Meta:
+        permissions = [
+            ("request_bill", "request bill"),
+           
+        ]
 

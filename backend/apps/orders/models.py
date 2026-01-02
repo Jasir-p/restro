@@ -32,7 +32,6 @@ class Order(models.Model):
         ('served', 'Served')
     ]
 
-    order_id = models.CharField(max_length=10, unique=True)
     worker = models.ForeignKey("users.Worker", on_delete=models.CASCADE)
     table = models.ForeignKey("table.Table", on_delete=models.CASCADE)
     status = models.CharField(
@@ -40,10 +39,15 @@ class Order(models.Model):
         choices=STATUS_CHOICES, 
         default='placed'
         )
+    created_at = models.DateTimeField(auto_now_add=True)
     
     @property
     def total_amount(self):
         return sum(item.total_amount for item in self.items.all())
+
+    @property
+    def order_number(self):
+        return f"OID-{self.id:06d}"
 
 
 class OrderItem(models.Model):

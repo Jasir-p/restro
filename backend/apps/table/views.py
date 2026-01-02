@@ -1,5 +1,5 @@
 # from django.shortcuts import render
-from rest_framework import views, status, permissions, response
+from rest_framework import views, status, permissions, response, decorators
 from .serializers import TableManagementSerializer
 from .services import get_tables, get_table_by_id
 from .permissions import TablePermissions
@@ -53,6 +53,7 @@ class TableManagementView(views.APIView):
 
         return response.Response({"message": "Removed successfully"}, 
                                  status=status.HTTP_200_OK)
+
 
 
 
