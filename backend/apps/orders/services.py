@@ -1,0 +1,29 @@
+from .models import Order, OrderItem, MenuItem
+from django.shortcuts import get_object_or_404
+
+
+def get_menu_item_by_id(id):
+    return get_object_or_404(MenuItem, id=id)
+
+
+def get_all_orders():
+
+    return Order.objects.all()
+
+
+def get_order_by_waiter(user):
+
+    return Order.objects.filter(worker=user)
+
+
+def order_get_by_id(id):
+
+    return get_object_or_404(Order, id=id)
+
+
+def get_order_items_by_order_id(order_id):
+    return Order.objects.filter(id=order_id).items.all()
+
+
+def get_single_order_item(item_id, order_id):
+    return get_object_or_404(OrderItem, id=item_id, order_id=order_id)
