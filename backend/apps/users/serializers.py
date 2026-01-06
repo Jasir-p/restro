@@ -1,7 +1,9 @@
-from rest_framework import serializers
+from rest_framework import serializers,exceptions
 from .models import Worker
 from django.contrib.auth.models import Group
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from django.contrib.auth import get_user_model
+from django.db.models import ObjectDoesNotExist
 
 
 class WorkerSerializers(serializers.ModelSerializer):
@@ -46,3 +48,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token["roles"] = list(user.groups.values_list("name", flat=True))
 
         return token
+    
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+
+    def validate(self, attrs):
+        try:
+
+            return super().validate(attrs)
+        except ObjectDoesNotExist:
+
+            raise Exception.ValidationError("User  does not exist o")
+        except Exception as e:
+
+            raise e
+        

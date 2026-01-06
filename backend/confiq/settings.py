@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'apps.orders',
+    'apps.bills',
+    'channels',
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -81,7 +84,49 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+#websocket 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 
+
+# Email Setup
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "no-reply@restaurant.local"
+)
+
+MANAGER_EMAIL = os.getenv(
+    "MANAGER_EMAIL",
+    "manager@restaurant.local"
+)
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+# celery  setup
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'  
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0' 
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'alert for pending bills to manager': {
+        'task': 'apps.bills.tasks.bill_alerts_to_manager',
+        'schedule': crontab(minute='*/5')
+    }
+}
 ROOT_URLCONF = 'confiq.urls'
 
 TEMPLATES = [
