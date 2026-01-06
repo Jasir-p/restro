@@ -44,8 +44,9 @@ const TableOrders = () => {
     try {
       await requestBillApi(tableId);
       showSuccess("Bill requested successfully");
-      // Removed setRefresh call to prevent automatic refetch
-      // The order data will remain as-is after bill request
+
+      navigate("/dashboard/waiter")
+
     } catch (error) {
       showError("Failed to request bill");
     }

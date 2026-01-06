@@ -29,3 +29,7 @@ staticfiles/
 *.ini
 *.cfg
 .DS_Store
+
+# Celery beat
+celerybeat-schedule*
+backend/celerybeat-schedule*
