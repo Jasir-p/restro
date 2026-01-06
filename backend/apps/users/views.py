@@ -4,8 +4,9 @@ from .serializers import (
      CustomTokenObtainPairSerializer
 )
 from rest_framework import views, response, permissions, status
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import CustomTokenRefreshSerializer
 
 
 # Create your views here.
@@ -30,6 +31,9 @@ class RegisterWorkersView(views.APIView):
 class CustomeTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer  
 
+
+class CustomeTokenRefreshView(TokenRefreshView):
+    serializer_class = CustomTokenRefreshSerializer
 
 class LogOutView(views.APIView):
 

@@ -31,6 +31,12 @@ class TableManagementSerializer(serializers.ModelSerializer):
         fields = ['id', 'table_number', 'capacity', 'status']
 
 
+class ReadTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = ['id', 'table_number', 'capacity', 'status']
+        
+
 class TableStatusSerializer(serializers.Serializer):
     status = serializers.ChoiceField(
         choices=Table.STATUS_CHOICE,

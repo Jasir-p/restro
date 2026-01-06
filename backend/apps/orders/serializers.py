@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import MenuItem, OrderItem, Order
+from apps.table.utils import table_status_handler
+from apps.table.serializers import ReadTableSerializer
+
 
 
 class MenuitemsSerializer(serializers.ModelSerializer):
@@ -23,7 +26,8 @@ class MenuitemsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MenuItem
-        fields = ['id', 'name', 'category', 'price']
+
+        fields = ['id', 'name', 'category', 'price', 'is_available']
 
     def validate_name(self, value):
         name = value.strip()
@@ -32,8 +36,7 @@ class MenuitemsSerializer(serializers.ModelSerializer):
                 'Title must be at least 3 characters long')
         
         items = MenuItem.objects.filter(name__iexact=name)
-        print(items)
-        
+        print(items)        
         if self.instance:
             items = items.exclude(id=self.instance.id)
 
@@ -44,6 +47,11 @@ class MenuitemsSerializer(serializers.ModelSerializer):
         
         return value
 
+
+class ReadMenuIteMSrializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuItem
+        fields = ['id', 'name', 'category', 'price', 'is_available']
 
 class OrderItemSerializer(serializers.ModelSerializer):
 
@@ -63,6 +71,8 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class ReadOrderItemSerializer(serializers.ModelSerializer):
+    menu_item = ReadMenuIteMSrializer()
+
 
     class Meta:
         model = OrderItem
@@ -115,14 +125,26 @@ class OrderSerializer(serializers.ModelSerializer):
         table.status = "occupied"
         table.save()
 
+        table_status_handler(table.id, table.status)
         return order
 
 
 class ReadOrderSerializer(serializers.ModelSerializer):
+
+    table = ReadTableSerializer()
+    items = ReadOrderItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'table', 'order_number',
+                  'status', 'total_amount', 'created_at',
+                  'items']
+
     class Meta:
         model = Order
         fields = ['id', 'table', 'order_number',
                   'status', 'total_amount', 'created_at']
+
 
 
 class OrderStatusSerializer(serializers.Serializer):
