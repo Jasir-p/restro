@@ -1,5 +1,6 @@
 # from django.shortcuts import render
 from rest_framework import viewsets, views, permissions, response, status, decorators
+
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import MenuItemFilter
 from .serializers import (
@@ -15,6 +16,11 @@ from .permissions import (
     OrderPermissions, 
     OrderItemPermissions
     )
+
+from .serializers import MenuitemsSerializer, OrderSerializer, OrderStatusSerializer, ReadOrderSerializer
+from .models import MenuItem
+from .permissions import MenuItemPermission, OrderPermissions
+
 from .services import (
     get_all_orders, 
     get_order_by_waiter, 
@@ -22,8 +28,9 @@ from .services import (
     get_menu_item_by_id,
     get_order_items_by_order_id,
     get_single_order_item,
-    get_order_by_table
-    )
+    get_order_by_table,
+    get_menu_item_by_id)
+
 
 # Create your views here.
 
@@ -33,8 +40,11 @@ class MenuItemsManagementViews(viewsets.ModelViewSet):
     serializer_class = MenuitemsSerializer
     queryset = MenuItem.objects.all()
 
+
     filter_backends = [DjangoFilterBackend]
     filterset_class = MenuItemFilter
+
+
     
     def get_permissions(self):
 
@@ -42,7 +52,6 @@ class MenuItemsManagementViews(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated()]
         
         return [permissions.IsAuthenticated(), MenuItemPermission()]
-
 
 @decorators.api_view(["POST"])
 @decorators.permission_classes([permissions.IsAuthenticated])
@@ -67,6 +76,7 @@ def menu_avalabilty_change(request, id):
 class OrdersManagementView(views.APIView):
     permission_classes = [permissions.IsAuthenticated, OrderPermissions]
 
+
     def get(self, request, table_id, *args, **kwargs):
         if not table_id:
             orders = get_all_orders() 
@@ -80,6 +90,16 @@ class OrdersManagementView(views.APIView):
                                      status=status.HTTP_404_NOT_FOUND)
 
         serializer = ReadOrderSerializer(orders)
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if user.has_perm("orders.view_order"):
+            orders = get_all_orders() 
+        else:
+            orders = get_order_by_waiter(self.request.user)
+
+        serializer = ReadOrderSerializer(orders, many=True)
+
 
         return response.Response({'orders': serializer.data}, 
                                  status=status.HTTP_200_OK)
@@ -104,6 +124,7 @@ VALID_TRANSITIONS = {
     "placed": ["in_kitchen"],
     "in_kitchen": ["served"],
 }
+
 
 
 @decorators.api_view(["PATCH"])

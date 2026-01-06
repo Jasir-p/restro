@@ -5,7 +5,8 @@ from .views import (
     menu_avalabilty_change,
     OrdersManagementView,
     order_status_change,
-    OrderItemsView
+    OrderItemsView,
+    order_status_change
 )
 
 
@@ -17,10 +18,15 @@ urlpatterns = [
     path('menu-items/<int:id>/change-status/', menu_avalabilty_change, 
          name='menu-item-status'),
     path('orders/', OrdersManagementView.as_view(), name="orders"),
+
     path('orders/<int:table_id>/', OrdersManagementView.as_view(), name="orders"),
     path('orders/<int:id>/change-status/', order_status_change, 
          name='order-status'),
     path('orders/<int:order_id>/order-items/', OrderItemsView.as_view(), name='order-items'),
-    path('orders/<int:item_id>/update-items/', OrderItemsView.as_view(), name='order-items-update')
+    path('orders/<int:item_id>/update-items/', OrderItemsView.as_view(), name='order-items-update'),
+
+    path('orders/<int:id>/change-status/', order_status_change, 
+         name='order-status')
+
 
 ]

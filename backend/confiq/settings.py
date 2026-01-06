@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.bills',
     'channels',
     "django_filters",
+
 ]
 
 MIDDLEWARE = [

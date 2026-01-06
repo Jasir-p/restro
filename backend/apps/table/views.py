@@ -1,6 +1,6 @@
 # from django.shortcuts import render
 from rest_framework import views, status, permissions, response, decorators
-from .serializers import TableManagementSerializer,TableStatusSerializer
+from .serializers import TableManagementSerializer, TableStatusSerializer
 from .services import get_tables, get_table_by_id
 from .permissions import TablePermissions
 from .utils import table_status_handler
@@ -98,6 +98,7 @@ def table_status_change(request, id):
         {"message": "successfully updated"},
         status=status.HTTP_200_OK
           )
+
 
 
 

@@ -18,6 +18,7 @@ def get_order_by_waiter(user):
 
 def order_get_by_id(id):
 
+
     return get_object_or_404(Order, id=id)
 
 
@@ -39,3 +40,6 @@ def get_order_by_table(table_id):
         .order_by("-created_at")
         .first()
     )
+
+    return get_object_or_404(Order, id=id)
+
