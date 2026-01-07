@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Login from "./pages/Login";
-import { Routes,Route } from "react-router-dom";
+import { Routes,Route,Navigate } from "react-router-dom";
 import './App.css'
 import WaiterDashboard from './pages/waiter/WaiterDashboard';
 import CashierDashboard from './pages/cashier/CashierDashboard';
