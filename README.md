@@ -270,8 +270,8 @@ The frontend uses a separate `.env` file inside the `frontend` directory.
 **File:** `frontend/.env`
 
 ```env
-REACT_APP_API_URL=http://localhost:8000
-REACT_APP_WS_URL=ws://localhost:8001
+VITE_API_URL=http://localhost:8000
+VITE_WS_URL=ws://localhost:8001
 ```
 
 **Usage**
@@ -309,7 +309,12 @@ Run migrations and seed data:
 ```bash
 docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py seed_data
+
+ {"username": "manager", "password": "manager123", "role": "manager"},
+ {"username": "waiter", "password": "waiter123", "role": "waiter"},
+ {"username": "cashier", "password": "cashier123", "role": "cashier"},
 ```
+
 
 ---
 
