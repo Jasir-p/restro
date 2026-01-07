@@ -13,8 +13,7 @@ from .serializers import (
 from .models import MenuItem
 from .permissions import ( 
     MenuItemPermission, 
-    OrderPermissions, 
-    OrderItemPermissions
+    OrderPermissions
     )
 
 from .serializers import MenuitemsSerializer, OrderSerializer, OrderStatusSerializer, ReadOrderSerializer
@@ -156,7 +155,7 @@ def order_status_change(request, id):
 
 
 class OrderItemsView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated, OrderItemPermissions]
+    permission_classes = [permissions.IsAuthenticated, OrderPermissions]
     
     def get(self, request, order_id):
         
