@@ -91,15 +91,6 @@ class OrdersManagementView(views.APIView):
 
         serializer = ReadOrderSerializer(orders)
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        if user.has_perm("orders.view_order"):
-            orders = get_all_orders() 
-        else:
-            orders = get_order_by_waiter(self.request.user)
-
-        serializer = ReadOrderSerializer(orders, many=True)
-
 
         return response.Response({'orders': serializer.data}, 
                                  status=status.HTTP_200_OK)

@@ -140,11 +140,6 @@ class ReadOrderSerializer(serializers.ModelSerializer):
                   'status', 'total_amount', 'created_at',
                   'items']
 
-    class Meta:
-        model = Order
-        fields = ['id', 'table', 'order_number',
-                  'status', 'total_amount', 'created_at']
-
 
 
 class OrderStatusSerializer(serializers.Serializer):
