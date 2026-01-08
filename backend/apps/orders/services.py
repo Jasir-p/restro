@@ -33,7 +33,7 @@ def get_single_order_item(item_id):
 def get_order_by_table(table_id):
     return (
         Order.objects
-        .select_related("table",' bill')
+        .select_related("table",'bill')
                                     
         .prefetch_related("items")           
         .filter(

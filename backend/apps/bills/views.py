@@ -53,7 +53,7 @@ BILL_STATUS_TRANSITIONS = {
 @decorators.permission_classes([permissions.IsAuthenticated])
 def bill_status_change(request,id):
 
-    user = request.user
+
 
     if not request.user.has_perm("bills.change_bills"):
         return response.Response(
@@ -74,12 +74,13 @@ def bill_status_change(request,id):
             status=400
         )
 
-    bill.status = request.data["status"]
+    bill.status = status_new
     bill.save()
 
     if bill.status == 'paid':
-        bill.table.status = 'available'
-        bill.save()
+        table = bill.table
+        table.status = "available"
+        table.save()
         table_status_handler(bill.table.id, bill.table.status)
 
     return response.Response({"message": "successfully updated"}, 
