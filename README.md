@@ -307,8 +307,8 @@ docker-compose up --build
 Run migrations and seed data:
 
 ```bash
-docker-compose exec backend python manage.py migrate
-docker-compose exec backend python manage.py seed_data
+docker-compose exec django-web python manage.py migrate
+docker-compose exec django-web python manage.py seed_data
 
  {"username": "manager", "password": "manager123", "role": "manager"},
  {"username": "waiter", "password": "waiter123", "role": "waiter"},
