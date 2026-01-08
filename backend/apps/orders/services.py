@@ -33,12 +33,13 @@ def get_single_order_item(item_id):
 def get_order_by_table(table_id):
     return (
         Order.objects
-        .select_related("table")              # FK
-        .prefetch_related("items")            # related_name="items"
+        .select_related("table",' bill')
+                                    
+        .prefetch_related("items")           
         .filter(
             table_id=table_id
         )
-        .order_by("-created_at")
+        .order_by("-created_at").exclude(bill__status='paid')
         .first()
     )
 
